@@ -420,6 +420,8 @@ def _get_platform():
         return 'android'
     elif environ.get('KIVY_BUILD', '') == 'ios':
         return 'ios'
+    elif environ.get('KIVY_BUILD', '') == 'emscripten':
+        return 'emscripten'
     elif _sys_platform in ('win32', 'cygwin'):
         return 'win'
     elif _sys_platform == 'darwin':

@@ -300,6 +300,8 @@ class LabelBase(object):
             fdirs = ['/System/Library/Fonts']
         elif platform == 'android':
             fdirs = ['/system/fonts']
+        elif platform == 'emscripten':
+            fdirs = ['/fonts']
         else:
             raise Exception("Unknown platform: {}".format(platform))
 

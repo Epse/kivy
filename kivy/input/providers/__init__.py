@@ -10,7 +10,10 @@ import os
 from kivy.utils import platform as core_platform
 from kivy.logger import Logger
 
-import kivy.input.providers.tuio
+try:
+    import kivy.input.providers.tuio
+except ImportError:
+    pass
 import kivy.input.providers.mouse
 
 platform = core_platform

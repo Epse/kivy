@@ -436,6 +436,11 @@ class WindowSDL(WindowBase):
                     continue
                 self._mouse_meta = self.modifiers
                 self.dispatch('on_mouse_move', x, y, self.modifiers)
+                if platform == 'emscripten':
+                    nx, ny = args
+                    nx = nx / self.system_size[0]
+                    ny = ny / self.system_size[1]
+                    SDL2MotionEventProvider.q.appendleft(('update', 0, nx, ny))
 
             elif action in ('mousebuttondown', 'mousebuttonup'):
                 x, y, button = args
@@ -453,6 +458,17 @@ class WindowSDL(WindowBase):
                 self._mouse_x = x
                 self._mouse_y = y
                 self.dispatch(eventname, x, y, btn, self.modifiers)
+                if platform == 'emscripten':
+                    nx, ny = args[:2]
+                    nx = nx / self.system_size[0]
+                    ny = ny / self.system_size[1]
+                    SDL2MotionEventProvider.q.appendleft((
+                        'fingerdown' \
+                        if eventname == 'on_mouse_down' \
+                        else 'fingerup',
+                        0, nx, ny,
+                    ))
+
             elif action.startswith('mousewheel'):
                 self._update_modifiers()
                 x, y, button = args
@@ -632,17 +648,21 @@ class WindowSDL(WindowBase):
         # for opengl, before mainloop... window reinit ?
         #self.dispatch('on_resize', *self.size)
 
-        while not EventLoop.quit and EventLoop.status == 'started':
-            try:
-                self._mainloop()
-            except BaseException as inst:
-                # use exception manager first
-                r = ExceptionManager.handle_exception(inst)
-                if r == ExceptionManager.RAISE:
-                    stopTouchApp()
-                    raise
-                else:
-                    pass
+        if platform == 'emscripten':
+            import js
+            js.run_forever(self._mainloop)
+        else:
+            while not EventLoop.quit and EventLoop.status == 'started':
+                try:
+                    self._mainloop()
+                except BaseException as inst:
+                    # use exception manager first
+                    r = ExceptionManager.handle_exception(inst)
+                    if r == ExceptionManager.RAISE:
+                        stopTouchApp()
+                        raise
+                    else:
+                        pass
 
     #
     # Pygame wrapper
