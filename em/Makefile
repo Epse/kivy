@@ -3,14 +3,19 @@
 # further processing. The files in gen0 are the targets for compiling,
 # i.e. they have been fully processed.
 #
-PYVERSION=3.5.2
+
+# This version should correspond to the current pyodide cpython
+PYVERSION=3.7.0
 PYMINOR=$(basename $(PYVERSION))
 
-CC=emcc
+PYODIDE_ROOT = $(HOME)/Documents/School/2019-2020/integratieproject/pyodide
+CC=$(PYODIDE_ROOT)/emsdk/emsdk/emscripten/tag-1.38.30/emcc
+export EM_CONFIG = $(PYODIDE_ROOT)/emsdk/emsdk/.emscripten
 OPTFLAGS=-O2
-CPY_EM=../cpython-emscripten
+CPY_EM=$(PYODIDE_ROOT)/cpython
 CPY_EM_INSTALL=$(CPY_EM)/installs/python-$(PYVERSION)
-CFLAGS=-std=gnu99 $(OPTFLAGS) \
+
+CFLAGS=$(OPTFLAGS) \
 	-I $(CPY_EM_INSTALL)/include/python$(PYMINOR)/ \
 	-I ../kivy/graphics \
 	-Wno-warn-absolute-paths \
@@ -104,7 +109,7 @@ obj/%.bc: gen0/%.c
 
 
 gen0/%.c: gen1/%.c
-	python $(CPY_EM)/utils/patch_cython_module.py $< $@ --start-depth 1
+	python ./utils/patch_cython_module.py $< $@ --start-depth 1
 	touch $@
 
 
@@ -127,14 +132,14 @@ gen2/%.c: ../%.pyx
 
 gen0/builtins.h: $(PYX_SRC)
 	@mkdir -p $(dir $@)
-	python $(CPY_EM)/utils/make_cython_builtins.py $(MOD_SRC) \
+	python ./utils/make_cython_builtins.py $(MOD_SRC) \
 		--start-depth 1 > $@
 
 
 root: lib_files $(wildcard fake_libs/*.py)
 	mkdir -p root/lib
 	tar -C $(CPY_EM_INSTALL) -cf - --files-from lib_files | tar -C root -xvf -
-	cp fake_libs/*.py root/lib/python3.5/
+	#cp fake_libs/*.py root/lib/python3.7/
 	touch root
 
 

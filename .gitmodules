@@ -1,3 +1,0 @@
-[submodule "cpython-emscripten"]
-	path = cpython-emscripten
-	url = git@github.com:dgym/cpython-emscripten.git

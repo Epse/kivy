@@ -39,16 +39,16 @@ static void onloaderror(const char *filename) {
 }
 
 
-typedef void *PyThread_type_lock;
-
-
-PyThread_type_lock PyThread_allocate_lock(void) {
-    return (PyThread_type_lock)1;
-}
-
-
-void PyThread_free_lock(PyThread_type_lock lock) {
-}
+//typedef void *PyThread_type_lock;
+//
+//
+//PyThread_type_lock PyThread_allocate_lock(void) {
+//    return (PyThread_type_lock)1;
+//}
+//
+//
+//void PyThread_free_lock(PyThread_type_lock lock) {
+//}
 
 
 int main(int argc, char** argv) {
