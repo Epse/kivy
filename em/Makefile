@@ -5,7 +5,7 @@
 #
 
 # This version should correspond to the current pyodide cpython
-PYVERSION=3.7.0
+PYVERSION=3.7.4
 PYMINOR=$(basename $(PYVERSION))
 
 PYODIDE_ROOT = $(HOME)/Documents/School/2019-2020/integratieproject/pyodide
